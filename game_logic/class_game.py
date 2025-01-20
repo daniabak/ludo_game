@@ -70,9 +70,8 @@ class LudoBoard:
 
 
 # إنشاء الرقعة
-##board = LudoBoard()
-
-##board.print_board()
+board = LudoBoard()
+board.print_board()
 
 
 
