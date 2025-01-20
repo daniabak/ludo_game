@@ -91,7 +91,50 @@ class Game:
         for x, y in path:
             self.grid[x][y].type = "#"
 
+    def canMoveTop(self, x, y):
+        """
+        Checks if the square above the given (x, y) position is '#'.
+        :param x: Current x-coordinate.
+        :param y: Current y-coordinate.
+        :return: True if the square above is '#', False otherwise.
+        """
+        if x > 0:  # Ensure we don't go out of bounds
+            return self.grid[x - 1][y].type == "#"
+        return False
 
+
+    def canMoveLeft(self, x, y):
+        """
+        Checks if the square to the left of the given (x, y) position is '#'.
+        :param x: Current x-coordinate.
+        :param y: Current y-coordinate.
+        :return: True if the square to the left is '#', False otherwise.
+        """
+        if y > 0:  # Ensure we don't go out of bounds
+            return self.grid[x][y - 1].type == "#"
+        return False
+
+    def canMoveBottom(self, x, y):
+        """
+        Checks if the square below the given (x, y) position is '#'.
+        :param x: Current x-coordinate.
+        :param y: Current y-coordinate.
+        :return: True if the square below is '#', False otherwise.
+        """
+        if x < len(self.grid) - 1:  # Ensure we don't go out of bounds
+            return self.grid[x + 1][y].type == "#"
+        return False
+        
+    def canMoveRight(self, x, y):
+        """
+        Checks if the square to the right of the given (x, y) position is '#'.
+        :param x: Current x-coordinate.
+        :param y: Current y-coordinate.
+        :return: True if the square to the right is '#', False otherwise.
+        """
+        if y < len(self.grid[0]) - 1:  # Ensure we don't go out of bounds
+            return self.grid[x][y + 1].type == "#"
+        return False
 #تابع لنقدر نغير بحالة المربع من حيث مثلا عدد الاحجار يلي فيه ..الخ
     def set_square(self, x, y, color,is_safty,wall):
         self.grid[x][y] = Squares(x, y, color, is_safty, wall)
