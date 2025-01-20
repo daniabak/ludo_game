@@ -67,7 +67,7 @@ class LudoBoard:
             return False
 
         current_square = self.board[index]
-        print(current_square.player)
+        
         if current_square.player is None:
             print("No piece at the specified index!")
             return False
@@ -82,23 +82,47 @@ class LudoBoard:
         destination_square = self.board[new_index]
 
         if destination_square.player is not None:
-            if(destination_square.player==current_square.player):
-              destination_square.player= destination_square.player+current_square.player
-              current_square.player = None
-            elif (destination_square.player!=current_square.player): 
+            if(destination_square.player[0]==current_square.player[0] ):
+              
+              destination_square.player= destination_square.player+current_square.player[0]
+              current_square.player=current_square.player[1:]
+              if destination_square.player == "b" * (len(destination_square.player) // len("b")):
+                  if index in self.numberOfStoneInPlayerB:
+                    self.numberOfStoneInPlayerB.remove(index)
+                  self.numberOfStoneInPlayerB.append(new_index)
+              elif destination_square.player == "r" * (len(destination_square.player) // len("r")):
+                 if index in self.numberOfStoneInPlayerR:
+                    self.numberOfStoneInPlayerR.remove(index)
+                 self.numberOfStoneInPlayerR.append(new_index)
+            elif (destination_square.player!=current_square.player and destination_square.type!="#" and destination_square.type!="startB" and destination_square.type!="startR"): 
                if(destination_square.player=="b"):
                    self.numberOfStoneInPlayerB.remove(new_index)
-                   destination_square.player = current_square.player
-                   current_square.player = None
+                   self.numberOfStoneInPlayerR.remove(index)
+                   self.numberOfStoneInPlayerR.append(new_index)
+                   destination_square.player = current_square.player[0]
+                   current_square.player = current_square.player[1:]
+                   print(self.numberOfStoneInPlayerB)
+                   print(self.numberOfStoneInPlayerR)
                elif(destination_square.player=="r"):
                    self.numberOfStoneInPlayerR.remove(new_index)
-                   destination_square.player = current_square.player
-                   current_square.player = None   
+                   self.numberOfStoneInPlayerB.remove(index)
+                   self.numberOfStoneInPlayerB.append(new_index)
+                   destination_square.player = current_square.player[0]
+                   current_square.player = current_square.player[1:]   
             return True
-
         # Move the piece
-        destination_square.player = current_square.player
-        current_square.player = None
+        destination_square.player = current_square.player[0]
+        if(destination_square.player=="b"):
+                  self.numberOfStoneInPlayerB.remove(index)
+                  self.numberOfStoneInPlayerB.append(new_index)
+                  print(self.numberOfStoneInPlayerB)
+        elif(destination_square.player=="r"):
+                  self.numberOfStoneInPlayerR.remove(index)
+                  self.numberOfStoneInPlayerR.append(new_index)
+                  print(self.numberOfStoneInPlayerR)
+        current_square.player = current_square.player[1:]
+       
+                  
         print(f"Moved player {destination_square.player} from index {index} to index {new_index}.")
         return True
      # طباعة الصف مع الفصل بين العناصر بـ " | "
@@ -106,14 +130,17 @@ class LudoBoard:
 
 # Example Usage
 board = LudoBoard()
-board.board[1].player="b"
-board.board[6].player="r"
-board.numberOfStoneInPlayerB.append(1)
-board.numberOfStoneInPlayerR.append(6)
+board.board[1].player="r"
+board.board[13].player="r"
+
+board.numberOfStoneInPlayerR.append(1)
+board.numberOfStoneInPlayerR.append(13)
 board.print_board()
 # Move a piece from index 0 by 5 steps
-success = board.move_piece(1, 5)
+success = board.move_piece(1, 12)
 if success:
     print("\nAfter moving:\n")
     board.print_board()
+    print(board.numberOfStoneInPlayerR)
+    print(board.numberOfStoneInPlayerB)
 print(board.check_win())
