@@ -46,8 +46,16 @@ class LudoBoard:
                         f"{cell.type[0].upper()+cell.type[-1].upper()  }"
                     )
             print(" | ".join(row))  # طباعة الصف مع الفصل بين العناصر بـ " | "
+    def checkPathHaveWall(self,index,dice):
+        currentCell=self.board[index]
+        finalIndex=index+dice
+        for cell in range(index,finalIndex+1):
+        # اذا كان حاجز
+            if len(cell.player) >2 and cell.player[0]!=currentCell.player[0]:
+                    return False
+            else :
+                    return True 
 
-
-# إنشاء الرقعة
+# إنشاء الرقعة 
 board = LudoBoard()
 board.print_board()
