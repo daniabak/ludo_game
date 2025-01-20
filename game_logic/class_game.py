@@ -34,6 +34,28 @@ class LudoBoard:
                 # خانات عادية
                 self.board.append(Squares(player=None, type="path"))
 
+
+
+
+    def add_stone_to_goal(self, color_player, dice_value):
+        goal = self.goalR if color_player == "Red" else self.goalB
+        none_count = goal.count(None)
+
+        if dice_value != none_count:
+            return False
+
+        for i in range(len(goal) - 1, -1, -1):
+            if goal[i] is None:
+                if color_player == 'Red':
+                    goal[i] = "Red_Stone"
+                else:
+                    goal[i] = "Blue_Stone"
+                return True
+
+        return False
+
+
+
     def check_win(self):
         # Check if any player has all their goals filled
         if all(goal is not None for goal in self.goalR):
@@ -41,6 +63,7 @@ class LudoBoard:
         elif all(goal is not None for goal in self.goalB):
             return "Blue"
         return None
+
 
     def print_board(self):
         # طباعة الرقعة على التيرمنال
@@ -161,6 +184,9 @@ board.board[6].player = "r"
 board.numberOfStoneInPlayerB.append(1)
 board.numberOfStoneInPlayerR.append(6)
 board.print_board()
+
+
+
 # Move a piece from index 0 by 5 steps
 success = board.move_piece(1, 12)
 if success:
