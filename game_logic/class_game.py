@@ -33,7 +33,16 @@ class LudoBoard:
                 # خانات عادية
                 self.board.append(Squares(player=None, type="path"))
 
+    def check_win(self):
+        # Check if any player has all their goals filled
+        if all(goal is not None for goal in self.goalR):
+            return "Red"
+        elif all(goal is not None for goal in self.goalB):
+            return "Blue"
+        return None
+
     def print_board(self):
+    
         # طباعة الرقعة على التيرمنال
         for i in range(0, len(self.board), 15):  # طباعة كل صف من 15 عنصر
             row = []  # قائمة مؤقتة لتخزين العناصر في الصف الحالي
@@ -51,3 +60,4 @@ class LudoBoard:
 # إنشاء الرقعة
 board = LudoBoard()
 board.print_board()
+print(board.check_win())
