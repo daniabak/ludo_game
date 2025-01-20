@@ -1,85 +1,109 @@
 from class_square import Squares
-class Game:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-        self.grid = [[None for _ in range(y)] for _ in range(x)]
-        self.players = {"red": [(13, 6)], "blue": [(1, 8)]}  # Player piece positions
-        self.init()
 
-    def init(self):
-        for i in range(self.x):
-            for j in range(self.y):
-                self.grid[i][j] = Squares(i, j, ".", 0, ".")
-        self.create_plus_shape()
 
-    def create_plus_shape(self):
-        for i in range(self.x):
-            self.grid[i][6].type = "#"
-            self.grid[i][7].type = "#"
-            self.grid[i][8].type = "#"
+class LudoBoard:
+    def __init__(self):
+        # تمثيل الرقعة باستخدام مصفوفة أحادية
+        self.board = []  # قائمة لتمثيل الرقعة
+        self.initialize_board()  # استدعاء دالة لتعبئة الرقعة
+        self.goalR = [None, None, None, None]  # منطقة الهدف للاعب الأحمر
+        self.goalB = [None, None, None, None]  # منطقة الهدف للاعب الأزرق
+        self.numberOfStoneInPlayerR = []  # أحجار اللاعب الأحمر
+        self.numberOfStoneInPlayerB = []  # أحجار اللاعب الأزرق
 
-        for j in range(self.y):
-            self.grid[6][j].type = "#"
-            self.grid[7][j].type = "#"
-            self.grid[8][j].type = "#"
+    def initialize_board(self):
+        # إنشاء الرقعة باستخدام كائنات Squares
+        for i in range(52):  # مثال لمسار يحتوي على 52 خلية
+            if i == 0:
+                # أول خلية هي نقطة البداية للاعب الأحمر
+                self.board.append(Squares(player=None, type="startR"))
+                
+            elif i == 26:
+                # منتصف الرقعة نقطة البداية للاعب الأزرق
+                self.board.append(Squares(player=None, type="startB"))
+            elif i in [0, 13, 26, 39]:
+                # خانات آمنة
+                self.board.append(Squares(player=None, type="#"))
+            elif i == 51:
+                # نهاية المسار للاعب الأحمر
+                self.board.append(Squares(player=None, type="endR"))
+            elif i == 25:
+                # نهاية المسار للاعب الأزرق
+                self.board.append(Squares(player=None, type="endB"))
+            else:
+                # خانات عادية
+                self.board.append(Squares(player=None, type="path"))
 
-        self.grid[7][7].type = "."
-        self.grid[7][6].type = "."
-        self.grid[7][5].type = "."
-        self.grid[7][8].type = "."
-        self.grid[7][9].type = "."
-        self.grid[6][7].type = "."
-        self.grid[8][7].type = "."
+    def print_board(self):
+    # طباعة الرقعة على التيرمنال
+     for i in range(0, len(self.board), 15):  # طباعة كل صف من 15 عنصر
+        row = []  # قائمة مؤقتة لتخزين العناصر في الصف الحالي
+        for cell in self.board[i:i+15]:  # أخذ 15 عنصر من المصفوفة
+            if cell.type == "path":  # إذا كانت الخلية من النوع "path"
+                row.append(f"{cell.player if cell.player is not None else '   '}")  # طباعة player إذا لم يكن None
+            else:
+                # طباعة محتوى الخلية إذا كان هناك player أو طباعة النوع فقط
+                row.append(
+                    f"{cell.type[0].upper() + cell.type[-1].upper()} {cell.player if cell.player is not None else ''}"
+                )
+        print(" | ".join(row))  # طباعة الصف مع الفصل بين العناصر بـ " | "
 
-    def set_square(self, x, y, color, is_safety, wall, type="."):
-        self.grid[x][y] = Squares(x, y, color, is_safety, type, wall)
-
-    def print(self):
-        for i in range(self.x):
-            for j in range(self.y):
-                # Print player color or square type
-                print(self.grid[i][j].color if self.grid[i][j].color != "." else self.grid[i][j].type, end=" ")
-            print()
-
-    def move_piece(self, player, piece_index, steps):
+    def move_piece(self, index, steps):
         """
-        Move a player's piece on the board.
-        :param player: Player name ("red" or "blue")
-        :param piece_index: Index of the piece to move
-        :param steps: Number of steps
+        Move a piece from the specified index by the given number of steps.
+        :param index: The index of the piece to move.
+        :param steps: The number of steps to move.
         """
-        # Get the current position of the piece
-        current_pos = self.players[player][piece_index]
-        x, y = current_pos
-
-        # Remove the piece from the current square
-        self.grid[x][y].color = "."
-
-        # Calculate the new position
-        new_x = x
-        new_y = y + steps  # Horizontal movement (example)
-        if new_y >= self.y:  # Check for board boundaries
-            print("You cannot move outside the board!")
-            self.grid[x][y].color = player[0]  # Restore the piece to the previous square
+        if index < 0 or index >= len(self.board):
+            print("Invalid index!")
             return False
 
-        # Check if the new square is occupied
-        if self.grid[new_x][new_y].color != ".":
-            print("The square is occupied! The other player's piece will be sent back to the base.")
-            other_player = self.grid[new_x][new_y].color
-            self.return_piece_to_base(other_player)
+        current_square = self.board[index]
+        print(current_square.player)
+        if current_square.player is None:
+            print("No piece at the specified index!")
+            return False
 
-        # Place the piece in the new position
-        self.grid[new_x][new_y].color = player[0]
-        self.players[player][piece_index] = (new_x, new_y)
+        new_index = index + steps
+
+        # Handle wrapping around the board
+        if new_index >= len(self.board):
+            new_index = new_index % len(self.board)
+
+        # Check if the destination is valid
+        destination_square = self.board[new_index]
+
+        if destination_square.player is not None:
+            if(destination_square.player==current_square.player):
+              destination_square.player= destination_square.player+current_square.player
+              current_square.player = None
+            elif (destination_square.player!=current_square.player): 
+               if(destination_square.player=="b"):
+                   self.numberOfStoneInPlayerB.remove(new_index)
+                   destination_square.player = current_square.player
+                   current_square.player = None
+               elif(destination_square.player=="r"):
+                   self.numberOfStoneInPlayerR.remove(new_index)
+                   destination_square.player = current_square.player
+                   current_square.player = None   
+            return True
+
+        # Move the piece
+        destination_square.player = current_square.player
+        current_square.player = None
+        print(f"Moved player {destination_square.player} from index {index} to index {new_index}.")
         return True
 
-    def return_piece_to_base(self, player):
-        """Send a player's piece back to its starting position."""
-        base = (13, 6) if player == "r" else (1, 8)
-        for i, pos in enumerate(self.players[player]):
-            if pos == base:
-                continue  # Base is already occupied
-            self.players[player][i] = base
-            return
+
+# Example Usage
+board = LudoBoard()
+board.board[1].player="b"
+board.board[6].player="r"
+board.numberOfStoneInPlayerB.append(1)
+board.numberOfStoneInPlayerR.append(6)
+board.print_board()
+# Move a piece from index 0 by 5 steps
+success = board.move_piece(1, 5)
+if success:
+    print("\nAfter moving:\n")
+    board.print_board()
