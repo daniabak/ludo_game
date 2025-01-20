@@ -33,6 +33,27 @@ class LudoBoard:
                 # خانات عادية
                 self.board.append(Squares(player=None, type="path"))
 
+
+
+    def add_stone_to_goal(self, color_player, dice_value):
+        goal = self.goalR if color_player == "Red" else self.goalB
+        none_count = goal.count(None)
+
+        if dice_value != none_count:
+            return False
+
+        for i in range(len(goal) - 1, -1, -1):
+            if goal[i] is None:
+                if color_player == 'Red':
+                    goal[i] = "Red_Stone"
+                else:
+                    goal[i] = "Blue_Stone"
+                return True
+
+        return False
+
+
+
     def print_board(self):
         # طباعة الرقعة على التيرمنال
         for i in range(0, len(self.board), 15):  # طباعة كل صف من 15 عنصر
@@ -49,5 +70,9 @@ class LudoBoard:
 
 
 # إنشاء الرقعة
-board = LudoBoard()
-board.print_board()
+##board = LudoBoard()
+
+##board.print_board()
+
+
+
