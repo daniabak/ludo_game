@@ -99,7 +99,17 @@ class LudoBoard:
 
         # Handle wrapping around the board
         if new_index >= len(self.board):
-            new_index = new_index % len(self.board)
+          steps_remaining = new_index - len(self.board)  # الخطوات المتبقية بعد تجاوز الرقعة
+          new_index = 0  # إعادة التحديد إلى بداية الرقعة
+          while steps_remaining > 0:
+        # استمر في الحركة مع تحديث الخطوات المتبقية
+            new_index += 1
+            steps_remaining -= 1
+
+        # تحقق إذا وصلنا إلى مربع النهاية
+            if self.board[new_index].type in ["endR", "endB"]:
+             break
+
 
         # Check if the destination is valid
         destination_square = self.board[new_index]
@@ -111,24 +121,28 @@ class LudoBoard:
               current_square.player=current_square.player[1:]
               if destination_square.player == "b" * (len(destination_square.player) // len("b")):
                   if index in self.numberOfStoneInPlayerB:
-                    self.numberOfStoneInPlayerB.remove(index)
+                   if(current_square.player[1:]== None): 
+                     self.numberOfStoneInPlayerB.remove(index)
                   self.numberOfStoneInPlayerB.append(new_index)
               elif destination_square.player == "r" * (len(destination_square.player) // len("r")):
                  if index in self.numberOfStoneInPlayerR:
-                    self.numberOfStoneInPlayerR.remove(index)
+                    if(current_square.player[1:]== None):
+                      self.numberOfStoneInPlayerR.remove(index)
                  self.numberOfStoneInPlayerR.append(new_index)
             elif (destination_square.player!=current_square.player and destination_square.type!="#" and destination_square.type!="startB" and destination_square.type!="startR"): 
-               if(destination_square.player=="b"):
+               if(destination_square.player=="b" * (len(destination_square.player) // len("b"))):
                    self.numberOfStoneInPlayerB.remove(new_index)
-                   self.numberOfStoneInPlayerR.remove(index)
+                   if(current_square.player[1:]== None):
+                      self.numberOfStoneInPlayerR.remove(index)
                    self.numberOfStoneInPlayerR.append(new_index)
                    destination_square.player = current_square.player[0]
                    current_square.player = current_square.player[1:]
                    print(self.numberOfStoneInPlayerB)
                    print(self.numberOfStoneInPlayerR)
-               elif(destination_square.player=="r"):
+               elif(destination_square.player=="r" * (len(destination_square.player) // len("r"))):
                    self.numberOfStoneInPlayerR.remove(new_index)
-                   self.numberOfStoneInPlayerB.remove(index)
+                   if(current_square.player[1:]== None):
+                     self.numberOfStoneInPlayerB.remove(index)
                    self.numberOfStoneInPlayerB.append(new_index)
                    destination_square.player = current_square.player[0]
                    current_square.player = current_square.player[1:]   
@@ -136,11 +150,13 @@ class LudoBoard:
         # Move the piece
         destination_square.player = current_square.player[0]
         if(destination_square.player=="b"):
-                  self.numberOfStoneInPlayerB.remove(index)
+                  if(current_square.player[1:]== None):
+                    self.numberOfStoneInPlayerB.remove(index)
                   self.numberOfStoneInPlayerB.append(new_index)
                   print(self.numberOfStoneInPlayerB)
         elif(destination_square.player=="r"):
-                  self.numberOfStoneInPlayerR.remove(index)
+                  if(current_square.player[1:]== None):
+                    self.numberOfStoneInPlayerR.remove(index)
                   self.numberOfStoneInPlayerR.append(new_index)
                   print(self.numberOfStoneInPlayerR)
         current_square.player = current_square.player[1:]
@@ -180,15 +196,17 @@ class LudoBoard:
 # Example Usage
 board = LudoBoard()
 board.board[1].player = "b"
-board.board[6].player = "r"
+board.board[49].player = "rr"
+board.board[51].player = "r"
 board.numberOfStoneInPlayerB.append(1)
-board.numberOfStoneInPlayerR.append(6)
+board.numberOfStoneInPlayerR.append(49)
+board.numberOfStoneInPlayerR.append(51)
 board.print_board()
 
 
 
 # Move a piece from index 0 by 5 steps
-success = board.move_piece(1, 12)
+success = board.move_piece(49, )
 if success:
     print("\nAfter moving:\n")
     board.print_board()
