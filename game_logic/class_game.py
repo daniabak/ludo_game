@@ -98,7 +98,7 @@ class LudoBoard:
         if board.board[cell].player is not None and len(board.board[cell].player) > 1 and board.board[cell].player[0] != currentCell.player[0]:
             return False
   
-     return True;
+     return True
  
     def move_piece(self, index, steps):
      newBoard =  copy.deepcopy(self)
@@ -323,17 +323,17 @@ for i, state in enumerate(possible_states):
     print(f"\nState {i+1}:\n")
     state.print_board()
 
-# # Move a piece from index 0 by 5 steps
-# success = board.move_piece(50,4)
-# success.print_board()
-# success2 = success.move_piece(2,11)
-# print("\nAfter moving:\n")
-# success2.print_board()
-# print(success2.numberOfStoneInPlayerR)
-# print(success2.numberOfStoneInPlayerB)
-# print(success2.goalB)
-# print(success2.goalR)
-# print(success2.check_win())
+# Move a piece from index 0 by 5 steps
+success = board.move_piece(50,4)
+success.print_board()
+success2 = success.move_piece(2,11)
+print("\nAfter moving:\n")
+success2.print_board()
+print(success2.numberOfStoneInPlayerR)
+print(success2.numberOfStoneInPlayerB)
+print(success2.goalB)
+print(success2.goalR)
+print(success2.check_win())
 
 
 
