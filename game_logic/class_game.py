@@ -55,8 +55,10 @@ class LudoBoard:
             if goal[i] is None:
                 if color_player == 'r':
                     goal[i] = "Red_Stone"
+                    
                 else:
                     goal[i] = "Blue_Stone"
+                print("goal :",goal)
                 return True
 
         return False
@@ -151,8 +153,11 @@ class LudoBoard:
         # Check if the destination is valid
          destination_square = newBoard.board[new_index]
 
-         print(destination_square.player)
-         if destination_square.player != None:
+         print(destination_square.player,"dest player")
+        #  print(destination_square.player[0],"dest player 0")
+         print(current_square.player,"current player")
+         print(current_square.player[0],"current player 0")
+         if  destination_square.player != "":
             if(destination_square.player[0]==current_square.player[0] ):
               
               destination_square.player= destination_square.player+current_square.player[0]
