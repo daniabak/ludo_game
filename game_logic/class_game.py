@@ -134,7 +134,7 @@ class LudoBoard:
              current_index+=1
              if(current_index<len(newBoard.board)):
               if newBoard.board[current_index].type == f"end{newBoard.board[index].player[0].upper()}" and steps != 0:
-                newBoard.print_board()
+                # newBoard.print_board()
                 return newBoard
          if new_index >= len(newBoard.board):
 
@@ -185,7 +185,7 @@ class LudoBoard:
                    newBoard.numberOfStoneInPlayerB.append(new_index)
                    destination_square.player = current_square.player[0]
                    current_square.player = current_square.player[1:]   
-            newBoard.print_board()
+            # newBoard.print_board()
             return newBoard
         # Move the piece
          destination_square.player = current_square.player[0]
@@ -204,7 +204,7 @@ class LudoBoard:
        
                   
          
-         newBoard.print_board()
+        #  newBoard.print_board()
          return newBoard
        else :
          if(current_square.player[0]=="r"):
@@ -217,7 +217,7 @@ class LudoBoard:
            newBoard.numberOfStoneInPlayerB.remove(index)
            newBoard.numberOfStoneInPlayerB.append(52)
            current_square.player = current_square.player[1:]
-     newBoard.print_board()
+    #  newBoard.print_board()
      return newBoard
     
     def next_state(self, dice_value, player):
@@ -242,8 +242,8 @@ class LudoBoard:
             # تحديث قائمة الأحجار
             if not player:
                 new_board.numberOfStoneInPlayerR.append(start_index)
-                print("::::::::::::::::::::::")
-                print(new_board.numberOfStoneInPlayerR)
+                # print("::::::::::::::::::::::")
+                # print(new_board.numberOfStoneInPlayerR)
             else:
                 new_board.numberOfStoneInPlayerB.append(start_index)
             
@@ -374,15 +374,15 @@ board.numberOfStoneInPlayerR.append(13)
 board.numberOfStoneInPlayerR.append(0)
 board.numberOfStoneInPlayerB.append(14)
 
-print(board.evaluate_board(board,"r"))
-
+# print(board.evaluate_board(board,"r"))
+# board.print_board()
 # # الحصول على الحالات الناتجة عن حركة القطعة في الموضع 50
-# possible_states = board.next_state(6,True)
+# possible_states = board.next_state(2,False)
 
 # # عرض كل حالة جديدة
 # for i, state in enumerate(possible_states):
 #     print(f"\nState {i+1}:\n")
-#     state.print_board()
+#     state[0].print_board()
 
 # # Move a piece from index 0 by 5 steps
 # success = board.move_piece(50,4)

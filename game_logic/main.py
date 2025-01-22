@@ -5,7 +5,7 @@ class Main:
         self.game=LudoBoard()
         print("start game , welcome \n ")
         self.game.print_board()
-        self.expectiminimax=Expectiminimax(3)
+        self.expectiminimax=Expectiminimax(1)
         self.ControlTheMovement(self.game,self.expectiminimax)
 
     def ControlTheMovement(self,game,expectiminimax):
@@ -19,7 +19,7 @@ class Main:
          break
         
         print("current player is Blue" if  game.isCurrentPlayerIsUser else "current player is Red")
-        dice =6
+        dice =game.roll_dice()
          
         print("dice value =",dice)
         print(game.numberOfStoneInPlayerB,"list of player blue")
@@ -34,15 +34,19 @@ class Main:
              game.isCurrentPlayerIsUser = not game.isCurrentPlayerIsUser 
              continue
         if not game.isCurrentPlayerIsUser and dice==6:
-           inputUser=expectiminimax.get_best_move(game,'r',dice)
+          # inputUser=input(f"select stone in this list please:{game.numberOfStoneInPlayerR} or press s to add stone as blue in start square" if len(game.numberOfStoneInPlayerR) != 0 else "enter s to start as blue (user)")
+          
+           inputUser=expectiminimax.get_best_move(game,False,dice)
            print("index from exp dice 6",inputUser)
            if inputUser==0:
-              inputUser=="s"
+              inputUser="s"
+
           # inputUser=input(f"select stone in this list please:{game.numberOfStoneInPlayerR} or press s to add stone as red in start square" if len(game.numberOfStoneInPlayerR) != 0 else "enter s to start as red (user)") 
         if not game.isCurrentPlayerIsUser and dice!=6:
           if len(game.numberOfStoneInPlayerR) != 0 :
-           inputUser=expectiminimax.get_best_move(game,'r',dice) 
-           print("index from exp dice ! 6",inputUser)
+            # inputUser=input(f"select stone in this list please:{game.numberOfStoneInPlayerB } ")
+            inputUser=int(expectiminimax.get_best_move(game,False,dice) )
+            print("index from exp dice ! 6",inputUser)
           else:
              print("wait")
              game.isCurrentPlayerIsUser = not game.isCurrentPlayerIsUser
@@ -68,10 +72,11 @@ class Main:
 
                if game.countDiceOfValueSix<3:
                 game=game.move_piece(int(inputUser),dice)
+                game.print_board()
                else:
 
                 game=game.move_piece(int(inputUser),dice)
-
+                game.print_board()
                 game.isCurrentPlayerIsUser = not game.isCurrentPlayerIsUser
                 game.countDiceOfValueSix=0
                 # self.ControlTheMovement(game)
@@ -80,18 +85,21 @@ class Main:
 
                if game.countDiceOfValueSix<3:
                 game=game.move_piece(int(inputUser),dice)
+                game.print_board()
 
 
                 # self.ControlTheMovement(game)
                else:
 
                 game=game.move_piece(int(inputUser),dice)
+                game.print_board()
  
                 game.isCurrentPlayerIsUser = not game.isCurrentPlayerIsUser
                 game.countDiceOfValueSix=0
         else:
              
              game=game.move_piece(int(inputUser),dice)
+             game.print_board()
              game.isCurrentPlayerIsUser = not game.isCurrentPlayerIsUser
              game.countDiceOfValueSix=0
             #  self.ControlTheMovement(game)

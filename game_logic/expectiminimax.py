@@ -15,7 +15,7 @@ class Expectiminimax:
 
         max_eval = -math.inf
         for dice_value in range(1, 7):  # قيم النرد الممكنة
-            next_states = board.next_state(dice_value, player == "r")
+            next_states = board.next_state(dice_value,  False)
             for state in next_states:
                 eval = self.min_move(state[0], depth - 1, player)
                 max_eval = max(max_eval, eval)
@@ -28,7 +28,7 @@ class Expectiminimax:
 
         total_eval = 0
         for dice_value in range(1, 7):
-            next_states = board.next_state(dice_value, player != "r")
+            next_states = board.next_state(dice_value, False)
             if not next_states:
                 continue
             probability = 1 / 6  # احتمال كل قيمة للنرد
@@ -43,7 +43,7 @@ class Expectiminimax:
       best_value = -math.inf
 
       # الحصول على الحالات الممكنة بناءً على قيمة النرد
-      next_states = board.next_state(dice_value, player == "r")
+      next_states = board.next_state(dice_value,  False)
 
       # تقييم كل حالة واختيار الأفضل
       for index, state in enumerate(next_states):
