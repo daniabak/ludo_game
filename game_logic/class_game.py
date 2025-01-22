@@ -1,5 +1,5 @@
 from class_square import Squares
-
+import random
 
 class LudoBoard:
     def __init__(self):
@@ -10,6 +10,12 @@ class LudoBoard:
         self.goalB = [None, None, None, None]  # منطقة الهدف للاعب الأزرق
         self.numberOfStoneInPlayerR = []  # أحجار اللاعب الأحمر
         self.numberOfStoneInPlayerB = []  # أحجار اللاعب الأزرق
+        self.isCurrentPlayerIsUser=True
+        self.countDiceOfValueSix=1
+
+    def roll_dice(self):
+          
+        return random.randint(1, 6)
 
     def initialize_board(self):
         # إنشاء الرقعة باستخدام كائنات Squares
@@ -57,12 +63,11 @@ class LudoBoard:
 
 
     def check_win(self):
-        # Check if any player has all their goals filled
-        if all(goal is not None for goal in self.goalR):
-            return "Red"
-        elif all(goal is not None for goal in self.goalB):
-            return "Blue"
-        return None
+
+           if  None not in self.goalB or None not in self.goalR :
+               return True
+           
+           return False
 
 
     def print_board(self):
@@ -84,14 +89,21 @@ class LudoBoard:
      currentCell=self.board[index]
      finalIndex= (index + dice) % len(self.board) 
      
-     for cell in range(index+1,finalIndex):
+     for cell in range(index+1,finalIndex-1):
         # اذا كان حاجز
-            if len(cell.player) >2 and cell.player[0]!=currentCell.player[0]:
+            if len(cell.player) >1 and cell.player[0]!=currentCell.player[0]:
                     return False
-            else :
-                    return True 
+          
+     return True 
 
- 
+    # def checkNumberOfDice(self,dice,index):
+    #     #start of game 
+    #     #playing
+    # def connectToUser(board):
+    #      dice= random.randint(1, 6)
+    #      input=str(input(f"{"select stone in this list please:"+self.numberOfStoneInPlayerB if len(self.game.numberOfStoneInPlayerB) != 0 else "enter s to add from base stones to game"}"))
+    #      if input is 's':
+    #          board[26].player.append("b")
     def move_piece(self, index, steps):
         """
         Move a piece from the specified index by the given number of steps.
@@ -191,28 +203,28 @@ class LudoBoard:
         return False, value
 
 
-# Example Usage
-board = LudoBoard()
-board.board[1].player = "b"
-board.board[6].player = "r"
-board.numberOfStoneInPlayerB.append(1)
-board.numberOfStoneInPlayerR.append(6)
-board.print_board()
+# # Example Usage
+# board = LudoBoard()
+# board.board[1].player = "b"
+# board.board[6].player = "r"
+# board.numberOfStoneInPlayerB.append(1)
+# board.numberOfStoneInPlayerR.append(6)
+# board.print_board()
 
 
 
-# Move a piece from index 0 by 5 steps
-success = board.move_piece(1, 12)
-if success:
-    print("\nAfter moving:\n")
-    board.print_board()
-    print(board.numberOfStoneInPlayerR)
-    print(board.numberOfStoneInPlayerB)
-print(board.check_win())
+# # Move a piece from index 0 by 5 steps
+# success = board.move_piece(1, 12)
+# if success:
+#     print("\nAfter moving:\n")
+#     board.print_board()
+#     print(board.numberOfStoneInPlayerR)
+#     print(board.numberOfStoneInPlayerB)
+# print(board.check_win())
 
-# Check path contains end example
-result, remaining = board.check_path_contains_end(10)
-print(f"Path contains end: {result}, Remaining steps: {remaining}")
+# # Check path contains end example
+# result, remaining = board.check_path_contains_end(10)
+# print(f"Path contains end: {result}, Remaining steps: {remaining}")
 
 
 
