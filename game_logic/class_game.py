@@ -80,16 +80,24 @@ class LudoBoard:
                     f"{cell.type[0].upper() + cell.type[-1].upper()} {cell.player if cell.player is not None else ''}"
                 )
         print(" | ".join(row))  # طباعة الصف مع الفصل بين العناصر بـ " | " # طباعة الصف مع الفصل بين العناصر بـ " | "
-    def checkPathHaveWall(self,index,dice):
-     currentCell=self.board[index]
-     finalIndex= (index + dice) % len(self.board) 
-     
-     for cell in range(index+1,finalIndex):
-        # اذا كان حاجز
-            print( "{{{{{{{{{{{{}}}}}}}}}}}}")
-            if  self.board[cell].player is not None and len(self.board[cell].player) >1 and self.board[cell].player[0]!=currentCell.player[0]:
+    def checkPathHaveWall(self,board,index,dice):
+     currentCell=board.board[index]
+     finalIndex= (index + dice) % len(board.board) 
+     if(index+1 < finalIndex):
+         for cell in range(index+1,finalIndex):
+            
+            if  board.board[cell].player is not None and len(board.board[cell].player) >1 and board.board[cell].player[0]!=currentCell.player[0]:
                     return False
-           
+     else   :
+      for cell in range(index + 1, len(board.board)):
+        if board.board[cell].player is not None and len(board.board[cell].player) > 1 and board.board[cell].player[0] != currentCell.player[0]:
+            return False
+
+    # المرور على الجزء الثاني (من بداية الرقعة إلى finalIndex)
+      for cell in range(0, finalIndex):
+        if board.board[cell].player is not None and len(board.board[cell].player) > 1 and board.board[cell].player[0] != currentCell.player[0]:
+            return False
+  
      return True;
  
     def move_piece(self, index, steps):
@@ -104,11 +112,11 @@ class LudoBoard:
             print("No piece at the specified index!")
             return newBoard
 
-     print(newBoard.checkPathHaveWall(index,steps))
-     if(newBoard.checkPathHaveWall(index,steps)==True): 
-       print("checkPathHaveWall")
+    #  print(newBoard.checkPathHaveWall(index,steps))
+     if(newBoard.checkPathHaveWall(newBoard,index,steps)==True): 
+      #  print("checkPathHaveWall")
        isHaveend=newBoard.check_path_contains_end(current_square.player[0],steps,index)
-       print( isHaveend)
+      #  print( isHaveend)
        if isHaveend == False: 
          print("check_path_contains_end")
          
@@ -202,15 +210,40 @@ class LudoBoard:
            current_square.player = current_square.player[1:]
      return newBoard
     
-    def next_state(self, index):
+    def next_state(self, dice_value, player):
      newboard=copy.deepcopy(self)
      next_states = []  # قائمة لتخزين الحالات الجديدة
 
-     for steps in range(1, 7):  # تجربة القيم من 1 إلى 6
-        new_board = newboard.move_piece(index, steps)  # استدعاء تابع الحركة
-        
+     stones_to_move = (
+        newboard.numberOfStoneInPlayerB if player else newboard.numberOfStoneInPlayerR
+     )
+   
+     if dice_value == 6 and len(stones_to_move) < 4:
+        new_board = copy.deepcopy(newboard)
+        start_index = 0 if not player else 26 
+         # نقطة البداية لكل لاعب
+        start_square = new_board.board[start_index]
+
+        # تحقق من أن الخلية ليست ممتلئة
+        if start_square.player is None or start_square.player[0] != ("r" if  player else "b"):
+            # إضافة حجر إلى نقطة البداية
+            start_square.player = (start_square.player or "") + ("r" if not player else "b")
+            
+            # تحديث قائمة الأحجار
+            if not player:
+                new_board.numberOfStoneInPlayerR.append(start_index)
+                print("::::::::::::::::::::::")
+                print(new_board.numberOfStoneInPlayerR)
+            else:
+                new_board.numberOfStoneInPlayerB.append(start_index)
+            
+            next_states.append(new_board)
+
+     for index in stones_to_move:  # تكرار على كل حجر
+        new_board = newboard.move_piece(index, dice_value)  # استدعاء تابع الحركة
+
         # التحقق مما إذا كانت الرقعة الجديدة مختلفة
-        if not newboard.is_same_board(newboard,new_board):
+        if not newboard.is_same_board(newboard, new_board):
             next_states.append(new_board)  # إضافة الرقعة الجديدة إلى القائمة
 
      return next_states
@@ -219,7 +252,7 @@ class LudoBoard:
     
      if len(new_board.board) != len(other_board.board):
         return False
-
+     
      for i in range(len(new_board.board)):
         # مقارنة الحقول حسب النوع واللاعب
         if new_board.board[i].type != other_board.board[i].type or new_board.board[i].player != other_board.board[i].player:
@@ -272,14 +305,18 @@ class LudoBoard:
 board = LudoBoard()
 board.board[50].player = "bb"
 board.board[13].player = "rr"
-board.board[8].player = "r"
+board.board[0].player = "rr"
+board.board[14].player = "b"
 board.numberOfStoneInPlayerB.append(50)
-board.numberOfStoneInPlayerR.append(3)
-board.numberOfStoneInPlayerR.append(8)
+board.numberOfStoneInPlayerR.append(13)
+board.numberOfStoneInPlayerR.append(13)
+board.numberOfStoneInPlayerR.append(0)
+board.numberOfStoneInPlayerB.append(14)
+
 board.print_board()
 
 # الحصول على الحالات الناتجة عن حركة القطعة في الموضع 50
-possible_states = board.next_state(8)
+possible_states = board.next_state(6,True)
 
 # عرض كل حالة جديدة
 for i, state in enumerate(possible_states):
