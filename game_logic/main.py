@@ -17,65 +17,76 @@ class Main:
          break
         
         print("current player is Blue" if  game.isCurrentPlayerIsUser else "current player is Red")
-        dice =6
-        # game.roll_dice()
+        dice =game.roll_dice()
+         
         print("dice value =",dice)
         print(game.numberOfStoneInPlayerB,"list of player blue")
         print(game.numberOfStoneInPlayerR,"list of player red")
         if game.isCurrentPlayerIsUser and dice==6:
           inputUser=input(f"select stone in this list please:{game.numberOfStoneInPlayerB} or press s to add stone as blue in start square" if len(game.numberOfStoneInPlayerB) != 0 else "enter s to start as blue (user)")
         if game.isCurrentPlayerIsUser and dice!=6:
-          inputUser=input(f"select stone in this list please:{game.numberOfStoneInPlayerB} " if len(game.numberOfStoneInPlayerB) != 0 else "sorry wait!")
+          if len(game.numberOfStoneInPlayerB) != 0 :
+           inputUser=input(f"select stone in this list please:{game.numberOfStoneInPlayerB } ")
+          else:
+             print("wait")
+             game.isCurrentPlayerIsUser = not game.isCurrentPlayerIsUser 
+             continue
         if not game.isCurrentPlayerIsUser and dice==6:
           inputUser=input(f"select stone in this list please:{game.numberOfStoneInPlayerR} or press s to add stone as red in start square" if len(game.numberOfStoneInPlayerR) != 0 else "enter s to start as red (user)") 
         if not game.isCurrentPlayerIsUser and dice!=6:
-          inputUser=input(f"select stone in this list please:{game.numberOfStoneInPlayerR} " if len(game.numberOfStoneInPlayerR) != 0 else "sorry wait !") 
+          if len(game.numberOfStoneInPlayerR) != 0 :
+           inputUser=input(f"select stone in this list please:{game.numberOfStoneInPlayerR} ") 
+          else:
+             print("wait")
+             game.isCurrentPlayerIsUser = not game.isCurrentPlayerIsUser
+             continue
         if dice ==6:
           if str(inputUser) == "s" :
             self.addStoneFromBase(game)
             game.print_board()
             game.countDiceOfValueSix+=1
-            if game.countDiceOfValueSix>4:
+            if game.countDiceOfValueSix>2:
              
             #  self.ControlTheMovement(game)
             
 
                game.isCurrentPlayerIsUser = not game.isCurrentPlayerIsUser
-               game.countDiceOfValueSix=1
+               game.countDiceOfValueSix=0
               #  self.ControlTheMovement(game)
           else:
               
-             print(game.numberOfStoneInPlayerB,"_________________",inputUser)
-             game.print_board()
+      
              if (int(inputUser)  in game.numberOfStoneInPlayerB ):  
                game.countDiceOfValueSix+=1
-               print("FGhjk")
-               if game.countDiceOfValueSix<4:
-                dd=game.move_piece(inputUser,dice)
-                dd.print_board()
-                print("jhgfdssdfghjk")
-                # self.ControlTheMovement(game)
-               else:
-                print("masa")
-                game.isCurrentPlayerIsUser = not game.isCurrentPlayerIsUser
-                game.countDiceOfValueSix=1
-                # self.ControlTheMovement(game)
-             elif inputUser  in game.numberOfStoneInPlayerR and len(game.numberOfStoneInPlayerR)>0:  
-               game.countDiceOfValueSix+=1
-               print("danaadanaa")
-               if game.countDiceOfValueSix<4:
-                dd=game.move_piece(inputUser,dice)
-                dd.print_board()
-                print("++++++++++++")
-                # self.ControlTheMovement(game)
-               else:
-                print("))))))))))))))))")
-                game.isCurrentPlayerIsUser = not game.isCurrentPlayerIsUser
-                game.countDiceOfValueSix=1 
-        else:
-             game.move_piece(inputUser,dice)
-             game.isCurrentPlayerIsUser = not game.isCurrentPlayerIsUser
 
+               if game.countDiceOfValueSix<3:
+                game=game.move_piece(int(inputUser),dice)
+               else:
+
+                game=game.move_piece(int(inputUser),dice)
+
+                game.isCurrentPlayerIsUser = not game.isCurrentPlayerIsUser
+                game.countDiceOfValueSix=0
+                # self.ControlTheMovement(game)
+             elif int(inputUser)  in game.numberOfStoneInPlayerR :  
+               game.countDiceOfValueSix+=1
+
+               if game.countDiceOfValueSix<3:
+                game=game.move_piece(int(inputUser),dice)
+
+
+                # self.ControlTheMovement(game)
+               else:
+
+                game=game.move_piece(int(inputUser),dice)
+ 
+                game.isCurrentPlayerIsUser = not game.isCurrentPlayerIsUser
+                game.countDiceOfValueSix=0
+        else:
+             
+             game=game.move_piece(int(inputUser),dice)
+             game.isCurrentPlayerIsUser = not game.isCurrentPlayerIsUser
+             game.countDiceOfValueSix=0
             #  self.ControlTheMovement(game)
 
             
@@ -102,7 +113,7 @@ class Main:
                 if  game.board[0].player is None:
                     game.board[0].player = "r"
                 else:
-                    game.board[0].player + "r"
+                    game.board[0].player += "r"
 
                 game.numberOfStoneInPlayerR.append(0)
                 print(game.board[0].player,"player start cell red")
