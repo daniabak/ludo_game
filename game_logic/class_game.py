@@ -1,5 +1,6 @@
 import copy
 from class_square import Squares
+import random
 
 class LudoBoard:
     def __init__(self):
@@ -10,6 +11,12 @@ class LudoBoard:
         self.goalB = [None, None, None, None]  # منطقة الهدف للاعب الأزرق
         self.numberOfStoneInPlayerR = []  # أحجار اللاعب الأحمر
         self.numberOfStoneInPlayerB = []  # أحجار اللاعب الأزرق
+        self.isCurrentPlayerIsUser=True
+        self.countDiceOfValueSix=0
+
+    def roll_dice(self):
+          
+        return random.randint(1, 6)
 
     def initialize_board(self):
         # إنشاء الرقعة باستخدام كائنات Squares
@@ -51,18 +58,17 @@ class LudoBoard:
                 else:
                     goal[i] = "Blue_Stone"
                 return True
-
+        print(goal)
         return False
 
 
 
     def check_win(self):
-        # Check if any player has all their goals filled
-        if all(goal is not None for goal in self.goalR):
-            return "Red"
-        elif all(goal is not None for goal in self.goalB):
-            return "Blue"
-        return None
+
+           if  None not in self.goalB or None not in self.goalR :
+               return True
+           
+           return False
 
 
     def print_board(self):
@@ -108,7 +114,7 @@ class LudoBoard:
             return newBoard
 
         
-     if current_square.player is None:
+     if current_square.player =="":
             print("No piece at the specified index!")
             return newBoard
 
@@ -118,7 +124,6 @@ class LudoBoard:
        isHaveend=newBoard.check_path_contains_end(current_square.player[0],steps,index)
       #  print( isHaveend)
        if isHaveend == False: 
-         print("check_path_contains_end")
          
          new_index = index + steps
 
@@ -129,13 +134,14 @@ class LudoBoard:
              current_index+=1
              if(current_index<len(newBoard.board)):
               if newBoard.board[current_index].type == f"end{newBoard.board[index].player[0].upper()}" and steps != 0:
-                return newBoard;
+                newBoard.print_board()
+                return newBoard
          if new_index >= len(newBoard.board):
 
           steps_remaining = new_index - len(newBoard.board)  # الخطوات المتبقية بعد تجاوز الرقعة
           new_index = 0  # إعادة التحديد إلى بداية الرقعة
           while steps_remaining > 0:
-        # استمر في الحركة مع تحديث الخطوات المتبقية
+
             new_index += 1
             steps_remaining -= 1
 
@@ -145,27 +151,28 @@ class LudoBoard:
         # Check if the destination is valid
          destination_square = newBoard.board[new_index]
 
-         if destination_square.player is not None:
+         print(destination_square.player)
+         if  destination_square.player != "" :
             if(destination_square.player[0]==current_square.player[0] ):
               
               destination_square.player= destination_square.player+current_square.player[0]
               current_square.player=current_square.player[1:]
               if destination_square.player == "b" * (len(destination_square.player) // len("b")):
                   if index in newBoard.numberOfStoneInPlayerB:
-                   if not current_square.player : 
+                  # if not current_square.player : 
                      newBoard.numberOfStoneInPlayerB.remove(index)
                   newBoard.numberOfStoneInPlayerB.append(new_index)
               elif destination_square.player == "r" * (len(destination_square.player) // len("r")):
                  if index in newBoard.numberOfStoneInPlayerR:
-                    if not current_square.player:
+                    #if not current_square.player:
                       print("remove..........................")
                       newBoard.numberOfStoneInPlayerR.remove(index)
                  newBoard.numberOfStoneInPlayerR.append(new_index)
             elif (destination_square.player!=current_square.player and destination_square.type!="#" and destination_square.type!="startB" and destination_square.type!="startR"): 
                if(destination_square.player=="b" * (len(destination_square.player) // len("b"))):
                    newBoard.numberOfStoneInPlayerB.remove(new_index)
-                   if not current_square.player[1:] :
-                      newBoard.numberOfStoneInPlayerR.remove(index)
+                   #if not current_square.player[1:] :
+                   newBoard.numberOfStoneInPlayerR.remove(index)
                    newBoard.numberOfStoneInPlayerR.append(new_index)
                    destination_square.player = current_square.player[0]
                    current_square.player = current_square.player[1:]
@@ -173,41 +180,44 @@ class LudoBoard:
                    print(newBoard.numberOfStoneInPlayerR)
                elif(destination_square.player=="r" * (len(destination_square.player) // len("r"))):
                    newBoard.numberOfStoneInPlayerR.remove(new_index)
-                   if not current_square.player[1:] :
-                     newBoard.numberOfStoneInPlayerB.remove(index)
+                   #if not current_square.player[1:] :
+                   newBoard.numberOfStoneInPlayerB.remove(index)
                    newBoard.numberOfStoneInPlayerB.append(new_index)
                    destination_square.player = current_square.player[0]
                    current_square.player = current_square.player[1:]   
+            newBoard.print_board()
             return newBoard
         # Move the piece
          destination_square.player = current_square.player[0]
          if(destination_square.player=="b"):
                   print(current_square.player[1:]+"++++++++++++")
-                  if not current_square.player[1:] :
-                    newBoard.numberOfStoneInPlayerB.remove(index)
+                 # if not current_square.player[1:] :
+                  newBoard.numberOfStoneInPlayerB.remove(index)
                   newBoard.numberOfStoneInPlayerB.append(new_index)
                   print(newBoard.numberOfStoneInPlayerB)
          elif(destination_square.player=="r"):
-                  if not current_square.player[1:] :
-                    newBoard.numberOfStoneInPlayerR.remove(index)
+                  #if not current_square.player[1:] :
+                  newBoard.numberOfStoneInPlayerR.remove(index)
                   newBoard.numberOfStoneInPlayerR.append(new_index)
                   print(newBoard.numberOfStoneInPlayerR)
          current_square.player = current_square.player[1:]
        
                   
-         print(f"Moved player {destination_square.player} from index {index} to index {new_index}.")
+         
+         newBoard.print_board()
          return newBoard
        else :
          if(current_square.player[0]=="r"):
-           if not current_square.player[1:] :
-             newBoard.numberOfStoneInPlayerR.remove(index)
+           #if not current_square.player[1:] :
+           newBoard.numberOfStoneInPlayerR.remove(index)
            newBoard.numberOfStoneInPlayerR.append(52)
            current_square.player = current_square.player[1:]
          elif(current_square.player[0]=="b"):
-           if not current_square.player[1:] :
-             newBoard.numberOfStoneInPlayerB.remove(index)
+           #if not current_square.player[1:] :
+           newBoard.numberOfStoneInPlayerB.remove(index)
            newBoard.numberOfStoneInPlayerB.append(52)
            current_square.player = current_square.player[1:]
+     newBoard.print_board()
      return newBoard
     
     def next_state(self, dice_value, player):
@@ -225,7 +235,7 @@ class LudoBoard:
         start_square = new_board.board[start_index]
 
         # تحقق من أن الخلية ليست ممتلئة
-        if start_square.player is None or start_square.player[0] != ("r" if  player else "b"):
+        if start_square.player =="" or start_square.player[0] != ("r" if  player else "b"):
             # إضافة حجر إلى نقطة البداية
             start_square.player = (start_square.player or "") + ("r" if not player else "b")
             
@@ -237,14 +247,14 @@ class LudoBoard:
             else:
                 new_board.numberOfStoneInPlayerB.append(start_index)
             
-            next_states.append(new_board)
+            next_states.append(tuple([new_board,start_index]))
 
      for index in stones_to_move:  # تكرار على كل حجر
         new_board = newboard.move_piece(index, dice_value)  # استدعاء تابع الحركة
 
         # التحقق مما إذا كانت الرقعة الجديدة مختلفة
         if not newboard.is_same_board(newboard, new_board):
-            next_states.append(new_board)  # إضافة الرقعة الجديدة إلى القائمة
+            next_states.append(tuple([new_board,index]))  # إضافة الرقعة الجديدة إلى القائمة
 
      return next_states
 
@@ -275,7 +285,7 @@ class LudoBoard:
 
         current_square = self.board[index]
 
-        if current_square.player is None:
+        if current_square.player =="":
          print("No piece at the specified index!")
          return False
 
@@ -299,6 +309,57 @@ class LudoBoard:
         # Check if the square is an 'end' square of the same color
 
         return False
+    def evaluate_board(self, board, player):
+       
+        score = 0
+        goalR=[]
+        for i in board.goalR :
+          if i is not None:
+           goalR.append(i)
+        goalB=[]
+        for i in board.goalB :
+          if i is not None:
+           goalB.append(i)  
+        # النقاط للأحجار في منطقة الهدف
+        score += len(goalR) * (10 if player == "r" else -10)
+        score += len(goalB) * (10 if player == "b" else -10)
+       
+        # النقاط للأحجار على المسار
+        score += len(board.numberOfStoneInPlayerR) * (5 if player == "r" else -5)
+        score += len(board.numberOfStoneInPlayerB) * (5 if player == "b" else -5)
+       
+        # النقاط للمسافة إلى الهدف
+        for index in board.numberOfStoneInPlayerR:
+            distance = self.calculate_distance_to_goal(index, "r")
+            score += (10 - distance) if player == "r" else -(10 - distance)
+       
+        for index in board.numberOfStoneInPlayerB:
+            distance = self.calculate_distance_to_goal(index, "b")
+            score += (10 - distance) if player == "b" else -(10 - distance)
+       
+        # النقاط للأحجار المحمية في الخانات الآمنة
+        for index in board.numberOfStoneInPlayerR:
+            if board.board[index].type == "#":  # خانة آمنة
+                score += 3 if player == "r" else -3
+       
+        for index in board.numberOfStoneInPlayerB:
+            if board.board[index].type == "#":  # خانة آمنة
+                score += 3 if player == "b" else -3
+       
+        return score
+    def calculate_distance_to_goal(self, index, player):
+        """
+        حساب المسافة بين موضع الحجر الحالي ونقطة النهاية.
+        """
+        if player == "r":
+                goal_start = 51  # موضع النهاية للاعب الأحمر
+        elif player == "b":
+                goal_start = 25  # موضع النهاية للاعب الأزرق
+
+        if index <= goal_start:
+                return goal_start - index  # المسافة في حالة عدم الالتفاف
+        else:
+            return (len(self.board) - index) + goal_start  # المسافة في حالة الالتفاف
 
 
 # Example Usage
@@ -313,29 +374,27 @@ board.numberOfStoneInPlayerR.append(13)
 board.numberOfStoneInPlayerR.append(0)
 board.numberOfStoneInPlayerB.append(14)
 
-board.print_board()
+print(board.evaluate_board(board,"r"))
 
-# الحصول على الحالات الناتجة عن حركة القطعة في الموضع 50
-possible_states = board.next_state(6,True)
+# # الحصول على الحالات الناتجة عن حركة القطعة في الموضع 50
+# possible_states = board.next_state(6,True)
 
-# عرض كل حالة جديدة
-for i, state in enumerate(possible_states):
-    print(f"\nState {i+1}:\n")
-    state.print_board()
+# # عرض كل حالة جديدة
+# for i, state in enumerate(possible_states):
+#     print(f"\nState {i+1}:\n")
+#     state.print_board()
 
-# Move a piece from index 0 by 5 steps
-success = board.move_piece(50,4)
-success.print_board()
-success2 = success.move_piece(2,11)
-print("\nAfter moving:\n")
-success2.print_board()
-print(success2.numberOfStoneInPlayerR)
-print(success2.numberOfStoneInPlayerB)
-print(success2.goalB)
-print(success2.goalR)
-print(success2.check_win())
-
-
+# # Move a piece from index 0 by 5 steps
+# success = board.move_piece(50,4)
+# success.print_board()
+# success2 = success.move_piece(2,11)
+# print("\nAfter moving:\n")
+# success2.print_board()
+# print(success2.numberOfStoneInPlayerR)
+# print(success2.numberOfStoneInPlayerB)
+# print(success2.goalB)
+# print(success2.goalR)
+# print(success2.check_win())
 
 
 
@@ -343,14 +402,16 @@ print(success2.check_win())
 
 
 
-# # Place a piece on the board near the "end" square for player Red
-# board.board[48].player = "r"  # Assume 'r' represents a red player
-# steps = 5
 
-# # Call the function and print the results
-# result, remaining_steps = board.check_path_contains_end( steps)
 
-# # Display test details
-# print(f"Starting index: 48, Steps: {steps}")
-# print(f"Result: {result}, Remaining Steps: {remaining_steps}")
-# print(f"Expected: True (if end is within {steps} steps), Remaining Steps: {steps - 3}")  # Example expectation
+# # # Place a piece on the board near the "end" square for player Red
+# # board.board[48].player = "r"  # Assume 'r' represents a red player
+# # steps = 5
+
+# # # Call the function and print the results
+# # result, remaining_steps = board.check_path_contains_end( steps)
+
+# # # Display test details
+# # print(f"Starting index: 48, Steps: {steps}")
+# # print(f"Result: {result}, Remaining Steps: {remaining_steps}")
+# # print(f"Expected: True (if end is within {steps} steps), Remaining Steps: {steps - 3}")  # Example expectation
